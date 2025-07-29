@@ -45,7 +45,8 @@ A responsive weather application that displays current weather conditions and a 
 5. **Error Handling**: Shows friendly alerts for invalid inputs
 
 ##App Preview
-<img width="893" height="672" alt="image" src="https://github.com/user-attachments/assets/61b1bc06-d953-4103-9d33-1ce8411f202d" />
+<img width="993" height="772" alt="image" src="https://github.com/user-attachments/assets/4c9b2531-e9f8-41cb-b386-e2428f4f01bf" />
+
 
 
 
