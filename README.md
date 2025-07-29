@@ -15,6 +15,14 @@ A responsive weather application that displays current weather conditions and a 
   - Atmospheric pressure
   - "Feels like" temperature
 - Error handling for invalid city names
+  
+-Auto-speaks weather when data loads
+-Voice toggle button for replay
+-Keyboard shortcut (Press V)
+-Natural speech with proper pauses
+-Stops previous speech before new one starts
+
+
 
 ## Technologies Used 🛠️
 
@@ -37,6 +45,9 @@ A responsive weather application that displays current weather conditions and a 
 5. **Error Handling**: Shows friendly alerts for invalid inputs
 
 ##App Preview
-<img width="1031" height="826" alt="image" src="https://github.com/user-attachments/assets/2d8eddbb-ccdc-405e-9d3e-841f0baaf09d" />
+<img width="893" height="672" alt="image" src="https://github.com/user-attachments/assets/61b1bc06-d953-4103-9d33-1ce8411f202d" />
+
+
+
 
 
