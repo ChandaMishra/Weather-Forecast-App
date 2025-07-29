@@ -1,130 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Weather App </title>
+    <title>Weather Forecast Pro</title>
     <link rel="stylesheet" href="style.css">
-   
 </head>
 <body>
-    <div class="card">
-        <div class="search">
-            <input type="text" placeholder="enter city name" spellcheck="false">
-            <button><img src="images/search.jpg"></button>
+    <div class="container">
+        <div class="weather-header">
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Search for a city...">
+                <button class="search-btn">
+                    <img src="images/search.jpg" alt="Search" class="search-icon">
+                </button>
+            </div>
+            <div class="error-message">Invalid city name</div>
         </div>
-        <div class="error">
-            <p>Invalid city name</p>
-        </div>
-        <div class="weather"> 
-            <img src="images/mist.jpg" class="weather-icon">
-            <h1 class="temp">22°c</h1>
-             <h2 class="city">New Delhi</h2>
-            <div class="details">
-                <div class="col">
-                    <img src="images/humidity.png">;
-                    <div>
-                        <p class="humidity">50%</p>
-                        <p>Humidity</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <img src="images/wind.png">
-                    <div>
-                        <p class="wind">15km/h</p>
-                        <p>Wind Speed</p>                    
-                    </div>
-                </div>
 
-                <div class="weather-app">
-                    <div class="time-container">
-                        <p id="current-time"></p>
+        <div class="weather-current">
+            <div class="weather-main">
+                <div class="location-date">
+                    <h1 class="location">New York</h1>
+                    <div class="date-time">
+                        <span class="date">Monday, June 5, 2023</span>
+                        <span class="time">10:30 AM</span>
                     </div>
-                    <!-- Your weather content here -->
+                </div>
+                <div class="weather-info">
+                    <div class="weather-icon-container">
+                        <img src="images/clear.png" alt="Weather Icon" class="weather-icon">
+                        <p class="weather-description">Clear Sky</p>
+                    </div>
+                    <div class="temperature-container">
+                        <span class="temperature">22</span>
+                        <span class="temperature-unit">°C</span>
+                    </div>
                 </div>
             </div>
-            
+
+            <div class="weather-details">
+                <div class="detail-item">
+                    <img src="images/humidity.png" alt="Humidity" class="detail-icon">
+                    <div class="detail-info">
+                        <span class="detail-value humidity">65</span>
+                        <span class="detail-label">Humidity</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <img src="images/wind.png" alt="Wind" class="detail-icon">
+                    <div class="detail-info">
+                        <span class="detail-value wind-speed">12</span>
+                        <span class="detail-label">Wind Speed</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <img src="images/humidity.png" alt="Pressure" class="detail-icon">
+                    <div class="detail-info">
+                        <span class="detail-value pressure">1012</span>
+                        <span class="detail-label">Pressure</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <img src="images/humidity.png" alt="Feels Like" class="detail-icon">
+                    <div class="detail-info">
+                        <span class="detail-value feels-like">24</span>
+                        <span class="detail-label">Feels Like</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weather-forecast">
+            <h2 class="forecast-title">7-Day Forecast</h2>
+            <div class="forecast-container">
+                <!-- Forecast items will be added here by JavaScript -->
+            </div>
         </div>
     </div>
+
     <script>
-       const apiKey="28079fd90c5d3281faed74288edb331e";
-       const apiUrl="https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
-
-       const searchBox = document.querySelector(".search input");
-       const searchBtn = document.querySelector(".search button");
-       const weatherIcon = document.querySelector(".weather-icon");
-
-
-       async function checkweather(city){
-        const response=await fetch(apiUrl+ city+`&appid=${apiKey}`);
-        if(response.status==404){
-            document.querySelector(".error").style.display="block";
-            document.querySelector(".weather").style.display="none";
-         }
-        else{
-            var data=await response.json();
-
-        document.querySelector(".city").innerHTML=data.name;
-        document.querySelector(".temp").innerHTML=Math.round(data.main.temp)+"°c";
-        document.querySelector(".humidity").innerHTML=data.main.humidity+ "%";
-        document.querySelector(".wind").innerHTML=data.wind.speed+ "km/h";
-
-        if(data.weather[0].main=="Clouds"){
-             weatherIcon.src="images/clouds.jpg";
+        const API_KEY = "28079fd90c5d3281faed74288edb331e";
+        const BASE_URL = "https://api.openweathermap.org/data/2.5";
+        
+        const searchBar = document.querySelector('.search-bar');
+        const searchBtn = document.querySelector('.search-btn');
+        const errorMessage = document.querySelector('.error-message');
+        
+        const locationElement = document.querySelector('.location');
+        const dateElement = document.querySelector('.date');
+        const timeElement = document.querySelector('.time');
+        const weatherIcon = document.querySelector('.weather-icon');
+        const weatherDesc = document.querySelector('.weather-description');
+        const tempElement = document.querySelector('.temperature');
+        
+        const humidityElement = document.querySelector('.humidity');
+        const windSpeedElement = document.querySelector('.wind-speed');
+        const pressureElement = document.querySelector('.pressure');
+        const feelsLikeElement = document.querySelector('.feels-like');
+        
+        const forecastContainer = document.querySelector('.forecast-container');
+        
+        const weatherIcons = {
+            '01d': 'clear.png',
+            '01n': 'clear.png',
+            '02d': 'clouds.jpg',
+            '02n': 'clouds.jpg',
+            '03d': 'clouds.jpg',
+            '03n': 'clouds.jpg',
+            '04d': 'clouds.jpg',
+            '04n': 'clouds.jpg',
+            '09d': 'rain.jpg',
+            '09n': 'rain.jpg',
+            '10d': 'rain.jpg',
+            '10n': 'rain.jpg',
+            '11d': 'thunderstorm.png',
+            '11n': 'thunderstorm.png',
+            '13d': 'snow.jpg',
+            '13n': 'snow.jpg',
+            '50d': 'mist.jpg',
+            '50n': 'mist.jpg'
+        };
+        
+        const weatherDescriptions = {
+            'clear': 'Clear Sky',
+            'clouds': 'Cloudy',
+            'rain': 'Rainy',
+            'drizzle': 'Drizzle',
+            'thunderstorm': 'Thunderstorm',
+            'snow': 'Snowy',
+            'mist': 'Misty',
+            'smoke': 'Smoky',
+            'haze': 'Hazy',
+            'fog': 'Foggy'
+        };
+        
+        window.addEventListener('load', () => {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            fetchWeather('New York');
+        });
+        
+        searchBtn.addEventListener('click', () => {
+            const city = searchBar.value.trim();
+            if (city) {
+                fetchWeather(city);
+            }
+        });
+        
+        searchBar.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const city = searchBar.value.trim();
+                if (city) {
+                    fetchWeather(city);
+                }
+            }
+        });
+        
+        async function fetchWeather(city) {
+            try {
+                const currentResponse = await fetch(`${BASE_URL}/weather?q=${city}&units=metric&appid=${API_KEY}`);
+                
+                if (!currentResponse.ok) {
+                    throw new Error('City not found');
+                }
+                
+                const currentData = await currentResponse.json();
+                const forecastResponse = await fetch(`${BASE_URL}/forecast?q=${city}&units=metric&appid=${API_KEY}`);
+                const forecastData = await forecastResponse.json();
+                
+                displayCurrentWeather(currentData);
+                displayForecast(forecastData);
+                
+                errorMessage.style.display = 'none';
+            } catch (error) {
+                errorMessage.style.display = 'block';
+                console.error('Error fetching weather data:', error);
+            }
         }
-        else if(data.weather[0].main=="Clear"){
-             weatherIcon.src="images/clear.png";
+        
+        function displayCurrentWeather(data) {
+            locationElement.textContent = data.name;
+            const weatherCode = data.weather[0].icon;
+            weatherIcon.src = `images/${weatherIcons[weatherCode]}`;
+            
+            const weatherMain = data.weather[0].main.toLowerCase();
+            weatherDesc.textContent = weatherDescriptions[weatherMain] || data.weather[0].description;
+            
+            tempElement.textContent = Math.round(data.main.temp);
+            humidityElement.textContent = data.main.humidity;
+            windSpeedElement.textContent = Math.round(data.wind.speed);
+            pressureElement.textContent = data.main.pressure;
+            feelsLikeElement.textContent = Math.round(data.main.feels_like);
         }
-        else if(data.weather[0].main=="Rain"){
-        weatherIcon.src="images/rain.jpg";
-       }
-        else if(data.weather[0].main=="Drizzle"){
-        weatherIcon.src="images/drizzle.jpg";
-       }
-       else if(data.weather[0].main=="cold"){
-        weatherIcon.src="images/snow.jpg";
-       }
-        else if(data.weather[0].main=="Mist"){
-        weatherIcon.src="images/mist.jpg";
-       }
-        document.querselector(".weather").style.display="block";
-        document.querySelector(".error").style.display="none";
-    }
-
-
-
-}
-
-searchBtn.addEventListener("click",()=>{
-            checkweather(searchBox.value);
-})
-function updateTime() {
-    const timeContainer = document.getElementById('current-time');
-    const now = new Date();
-    
-    // Get hours, minutes, and seconds
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    let seconds = now.getSeconds();
-    
-    // Add leading zero to minutes and seconds if needed
-    if (minutes < 10) minutes = '0' + minutes;
-    if (seconds < 10) seconds = '0' + seconds;
-    
-    // Format time in HH:MM:SS
-    const currentTime = `${hours}:${minutes}:${seconds}`;
-    
-    // Update the time container
-    timeContainer.textContent = currentTime;
-}
-
-// Update the time every second
-setInterval(updateTime, 1000);
-
-// Initial call to display time immediately
-updateTime();
-
-</script>
-
+        
+        function displayForecast(data) {
+            forecastContainer.innerHTML = '';
+            
+            const dailyForecast = {};
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = date.toLocaleDateString();
+                
+                if (!dailyForecast[dateStr]) {
+                    dailyForecast[dateStr] = {
+                        day: day,
+                        temp_min: item.main.temp_min,
+                        temp_max: item.main.temp_max,
+                        weather: item.weather[0],
+                        date: date
+                    };
+                } else {
+                    if (item.main.temp_min < dailyForecast[dateStr].temp_min) {
+                        dailyForecast[dateStr].temp_min = item.main.temp_min;
+                    }
+                    if (item.main.temp_max > dailyForecast[dateStr].temp_max) {
+                        dailyForecast[dateStr].temp_max = item.main.temp_max;
+                    }
+                }
+            });
+            
+            const forecastDays = Object.values(dailyForecast).slice(0, 7);
+            
+            forecastDays.forEach(day => {
+                const forecastItem = document.createElement('div');
+                forecastItem.className = 'forecast-item';
+                
+                forecastItem.innerHTML = `
+                    <div class="forecast-day">${day.day}</div>
+                    <img src="images/${weatherIcons[day.weather.icon]}" alt="${day.weather.main}" class="forecast-icon">
+                    <div class="forecast-temps">
+                        <span class="forecast-temp-max">${Math.round(day.temp_max)}°</span>
+                        <span class="forecast-temp-min">${Math.round(day.temp_min)}°</span>
+                    </div>
+                `;
+                
+                forecastContainer.appendChild(forecastItem);
+            });
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString('en-US', options);
+            
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            timeElement.textContent = `${hours}:${minutes} ${ampm}`;
+        }
+    </script>
 </body>
 </html>
